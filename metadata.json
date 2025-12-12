@@ -1,0 +1,5 @@
+{
+  "name": "Chroma-Pilot Clinical Genomics",
+  "description": "A cloud-based platform for genomic data-driven decision-making in clinics, featuring real-time bio-telemetry and pharmacogenomic (PGx) alerts.",
+  "requestFramePermissions": []
+}
