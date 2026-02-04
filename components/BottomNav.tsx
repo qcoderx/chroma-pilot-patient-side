@@ -1,49 +1,68 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { haptic } from '../utils/haptics';
 
-const BottomNav: React.FC = () => {
+interface NavItem {
+  icon: string;
+  label: string;
+  path: string;
+}
+
+const navItems: NavItem[] = [
+  { icon: 'home', label: 'Home', path: '/dashboard' },
+  { icon: 'quiz', label: 'Calibrate', path: '/onboarding' },
+  { icon: 'bar_chart', label: 'Insights', path: '/insights' },
+  { icon: 'settings', label: 'Settings', path: '/settings' },
+];
+
+interface BottomNavProps {
+  className?: string;
+}
+
+const BottomNav: React.FC<BottomNavProps> = ({ className = '' }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
-
-  const navItems = [
-    { icon: 'grid_view', label: 'Dashboard', path: '/' },
-    { icon: 'biotech', label: 'Genetics', path: '/genetics' },
-    { icon: 'tips_and_updates', label: 'Nudges', path: '/nudges' },
-    { icon: 'settings_heart', label: 'Settings', path: '/settings' },
-  ];
-
-  // Don't show nav on collision/stabilized pages
-  if (['/collision', '/stabilized'].includes(location.pathname)) return null;
+  const handleNavClick = (path: string) => {
+    haptic('selection');
+    navigate(path);
+  };
 
   return (
-    <nav className="fixed bottom-6 left-4 right-4 z-50">
-      <div className="flex items-center justify-between px-6 py-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl">
-        {navItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className="flex flex-col items-center gap-1 group w-12"
-          >
-            <span
-              className={`material-symbols-outlined transition-all duration-300 ${
-                isActive(item.path)
-                  ? 'text-bond-blue scale-110 drop-shadow-[0_0_5px_rgba(0,194,255,0.8)]'
-                  : 'text-white/40 group-hover:text-white'
-              }`}
+    <nav className={`absolute bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black via-black/95 to-transparent ${className}`}>
+      <div className="flex items-center justify-around px-4 py-2.5 rounded-2xl bg-white/[0.08] backdrop-blur-xl border border-white/10">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path ||
+            (item.path === '/dashboard' && location.pathname === '/');
+
+          return (
+            <button
+              key={item.path}
+              onClick={() => handleNavClick(item.path)}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1 transition-all active:scale-90 ${isActive ? '' : 'opacity-50 hover:opacity-80'
+                }`}
             >
-              {item.icon}
-            </span>
-            <span
-              className={`text-[10px] font-medium transition-colors ${
-                isActive(item.path) ? 'text-white/90' : 'text-white/40 group-hover:text-white'
-              }`}
-            >
-              {item.label}
-            </span>
-          </button>
-        ))}
+              <span
+                className={`material-symbols-outlined text-xl transition-all ${isActive
+                    ? 'text-primary drop-shadow-[0_0_8px_rgba(54,226,123,0.6)]'
+                    : 'text-white/60'
+                  }`}
+              >
+                {item.icon}
+              </span>
+              <span
+                className={`text-[9px] font-medium transition-colors ${isActive ? 'text-primary' : 'text-white/60'
+                  }`}
+              >
+                {item.label}
+              </span>
+              {/* Active indicator dot */}
+              {isActive && (
+                <span className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full animate-pulse" />
+              )}
+            </button>
+          );
+        })}
       </div>
     </nav>
   );

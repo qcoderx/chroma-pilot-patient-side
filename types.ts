@@ -1,31 +1,53 @@
-export interface Metric {
-  label: string;
-  value: string | number;
-  unit?: string;
-  status: 'optimal' | 'reducing' | 'warning' | 'critical' | 'stable';
-  icon: string;
+// Onboarding Question Types
+export type QuestionType = 'boolean' | 'slider' | 'choice';
+
+export interface Question {
+  id: number;
+  text: string;
+  type: QuestionType;
+  module: 1 | 2 | 3; // 1: Safety Shield, 2: Ancestral Radar, 3: Live Context
+  critical?: boolean;
+  choices?: string[];
+  sliderConfig?: {
+    min: number;
+    max: number;
+    unit: string;
+    step: number;
+  };
 }
 
-export interface Nudge {
-  id: string;
-  title: string;
-  description: string;
-  timestamp: string; // e.g., "Today, 10:15"
-  type: 'pending' | 'resolved' | 'info';
-  icon: string;
-  actionText?: string;
-  gene?: string;
+export interface UserAnswer {
+  questionId: number;
+  answer: boolean | number | string;
+  timestamp: Date;
 }
 
-export interface Variant {
+export interface OnboardingProgress {
+  currentModule: 1 | 2 | 3;
+  currentQuestionIndex: number;
+  answers: UserAnswer[];
+  completed: boolean;
+}
+
+export interface Badge {
   id: string;
-  gene: string;
   name: string;
-  riskLevel: 'high' | 'moderate' | 'low' | 'optimal';
-  description: string;
-  details: {
-    label: string;
-    value: string;
-  }[];
   icon: string;
+  color: string;
+  description: string;
+  earned: boolean;
+  earnedAt?: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  level: number;
+  xp: number;
+  badges: Badge[];
+  onboardingComplete: boolean;
+  phenotypeProfile?: {
+    safetyScore: number;
+    heritageRisk: 'low' | 'moderate' | 'high';
+    lifestyleIndex: number;
+  };
 }
