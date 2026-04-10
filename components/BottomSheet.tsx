@@ -36,40 +36,31 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-
     const deltaY = e.touches[0].clientY - startY.current;
     setDragOffset(deltaY);
   };
 
   const handleTouchEnd = () => {
     if (!isDragging) return;
-
     setIsDragging(false);
 
-    // Calculate which snap point to go to
     const currentHeight = startHeight.current - dragOffset;
     const windowHeight = window.innerHeight;
 
-    // Find closest snap point
     let closestSnap = 0;
     let minDistance = Infinity;
 
-    // Check if dragging down significantly (to close)
     if (dragOffset > 100) {
       if (currentSnap === 0) {
-        // Close the sheet
         onClose();
         setDragOffset(0);
         return;
       } else {
-        // Go to lower snap point
         closestSnap = Math.max(0, currentSnap - 1);
       }
     } else if (dragOffset < -50) {
-      // Dragging up - go to higher snap point
       closestSnap = Math.min(snapPoints.length - 1, currentSnap + 1);
     } else {
-      // Find closest snap point
       snapPoints.forEach((snap, index) => {
         const snapHeight = snap * windowHeight;
         const distance = Math.abs(currentHeight - snapHeight);
@@ -83,7 +74,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     setCurrentSnap(closestSnap);
     setDragOffset(0);
 
-    // Haptic feedback
     if ('vibrate' in navigator) {
       navigator.vibrate(10);
     }
@@ -96,7 +86,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     } else {
       document.body.style.overflow = '';
     }
-
     return () => {
       document.body.style.overflow = '';
     };
@@ -110,7 +99,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+        className="fixed inset-0 bg-text-primary/40 backdrop-blur-sm z-40 transition-opacity duration-300"
         style={{ opacity: isOpen ? 1 : 0 }}
         onClick={onClose}
       />
@@ -118,7 +107,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       {/* Sheet */}
       <div
         ref={sheetRef}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-surface-dark rounded-t-3xl border-t border-white/10 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-surface rounded-t-3xl border-t border-border shadow-elevated"
         style={{
           height: `${height}px`,
           transition: isDragging ? 'none' : 'height 0.3s ease-out',
@@ -132,13 +121,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="w-10 h-1 bg-white/30 rounded-full" />
+          <div className="w-10 h-1 bg-border rounded-full" />
         </div>
 
         {/* Title */}
         {title && (
-          <div className="px-4 pb-3 border-b border-white/10">
-            <h2 className="text-white font-bold text-lg">{title}</h2>
+          <div className="px-4 pb-3 border-b border-border">
+            <h2 className="text-text-primary font-bold text-lg">{title}</h2>
           </div>
         )}
 
@@ -188,8 +177,8 @@ export const ActionSheet: React.FC<ActionSheetProps> = ({
   if (!isVisible) return null;
 
   const colorClasses = {
-    default: 'text-white hover:bg-white/10',
-    danger: 'text-red-400 hover:bg-red-500/10',
+    default: 'text-text-primary hover:bg-input-bg',
+    danger: 'text-danger hover:bg-danger/10',
     primary: 'text-primary hover:bg-primary/10',
   };
 
@@ -197,7 +186,7 @@ export const ActionSheet: React.FC<ActionSheetProps> = ({
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
+        className={`fixed inset-0 bg-text-primary/40 backdrop-blur-sm z-40 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
           }`}
         onClick={onClose}
       />
@@ -207,10 +196,10 @@ export const ActionSheet: React.FC<ActionSheetProps> = ({
         className={`fixed bottom-0 left-0 right-0 z-50 p-4 transition-transform duration-300 ease-out ${isOpen ? 'translate-y-0' : 'translate-y-full'
           }`}
       >
-        <div className="bg-surface-dark rounded-2xl border border-white/10 overflow-hidden mb-2">
+        <div className="bg-surface rounded-2xl border border-border overflow-hidden mb-2 shadow-card">
           {title && (
-            <div className="px-4 py-3 border-b border-white/10">
-              <p className="text-white/60 text-sm text-center">{title}</p>
+            <div className="px-4 py-3 border-b border-border">
+              <p className="text-text-secondary text-sm text-center">{title}</p>
             </div>
           )}
 
@@ -221,7 +210,7 @@ export const ActionSheet: React.FC<ActionSheetProps> = ({
                 option.onClick();
                 onClose();
               }}
-              className={`w-full px-4 py-3.5 flex items-center justify-center gap-2 border-b border-white/5 last:border-0 transition-colors ${colorClasses[option.color || 'default']
+              className={`w-full px-4 py-3.5 flex items-center justify-center gap-2 border-b border-border/50 last:border-0 transition-colors ${colorClasses[option.color || 'default']
                 }`}
             >
               {option.icon && (
@@ -234,7 +223,7 @@ export const ActionSheet: React.FC<ActionSheetProps> = ({
 
         <button
           onClick={onClose}
-          className="w-full px-4 py-3.5 bg-surface-dark rounded-2xl border border-white/10 text-white font-bold hover:bg-white/5 transition-colors"
+          className="w-full px-4 py-3.5 bg-surface rounded-2xl border border-border text-text-primary font-bold hover:bg-input-bg transition-colors shadow-card"
         >
           {cancelLabel}
         </button>

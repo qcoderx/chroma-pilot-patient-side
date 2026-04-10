@@ -29,8 +29,8 @@ const BottomNav: React.FC<BottomNavProps> = ({ className = '' }) => {
   };
 
   return (
-    <nav className={`absolute bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black via-black/95 to-transparent ${className}`}>
-      <div className="flex items-center justify-around px-4 py-2.5 rounded-2xl bg-white/[0.08] backdrop-blur-xl border border-white/10">
+    <nav className={`absolute bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-background via-background/95 to-transparent ${className}`}>
+      <div className="flex items-center justify-around px-4 py-2.5 rounded-2xl bg-surface border border-border shadow-card">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path ||
             (item.path === '/dashboard' && location.pathname === '/');
@@ -44,21 +44,21 @@ const BottomNav: React.FC<BottomNavProps> = ({ className = '' }) => {
             >
               <span
                 className={`material-symbols-outlined text-xl transition-all ${isActive
-                    ? 'text-primary drop-shadow-[0_0_8px_rgba(54,226,123,0.6)]'
-                    : 'text-white/60'
+                  ? 'text-primary'
+                  : 'text-text-secondary'
                   }`}
               >
                 {item.icon}
               </span>
               <span
-                className={`text-[9px] font-medium transition-colors ${isActive ? 'text-primary' : 'text-white/60'
+                className={`text-[9px] font-medium transition-colors ${isActive ? 'text-primary' : 'text-text-secondary'
                   }`}
               >
                 {item.label}
               </span>
               {/* Active indicator dot */}
               {isActive && (
-                <span className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full animate-pulse" />
+                <span className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full" />
               )}
             </button>
           );

@@ -24,7 +24,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
   const animationClasses: Record<string, string> = {
     pulse: 'animate-pulse',
-    shimmer: 'relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent',
+    shimmer: 'relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-border/60 before:to-transparent',
     none: '',
   };
 
@@ -35,7 +35,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
   return (
     <div
-      className={`bg-white/10 ${variantClasses[variant]} ${animationClasses[animation]} ${className}`}
+      className={`bg-border/50 ${variantClasses[variant]} ${animationClasses[animation]} ${className}`}
       style={style}
     />
   );
@@ -93,7 +93,7 @@ export const DashboardSkeleton: React.FC = () => (
 );
 
 export const CardSkeleton: React.FC = () => (
-  <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+  <div className="p-4 rounded-xl bg-surface border border-border space-y-3">
     <div className="flex items-center gap-3">
       <Skeleton variant="rounded" width={40} height={40} />
       <div className="space-y-2 flex-1">
@@ -106,7 +106,7 @@ export const CardSkeleton: React.FC = () => (
 );
 
 export const ListItemSkeleton: React.FC = () => (
-  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+  <div className="flex items-center gap-3 p-3 rounded-xl bg-surface border border-border">
     <Skeleton variant="rounded" width={40} height={40} />
     <div className="flex-1 space-y-2">
       <Skeleton variant="text" width="70%" />

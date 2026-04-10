@@ -73,42 +73,36 @@ const Notifications: React.FC = () => {
 
   const getTypeColor = (type: Notification['type']) => {
     switch (type) {
-      case 'alert': return 'text-red-400 bg-red-500/20 border-red-500/30';
-      case 'success': return 'text-primary bg-primary/20 border-primary/30';
-      case 'reminder': return 'text-amber-400 bg-amber-500/20 border-amber-500/30';
-      default: return 'text-bond-blue bg-bond-blue/20 border-bond-blue/30';
+      case 'alert': return 'text-danger bg-danger/10 border-danger/20';
+      case 'success': return 'text-success bg-success/10 border-success/20';
+      case 'reminder': return 'text-warning bg-warning/10 border-warning/20';
+      default: return 'text-info bg-info/10 border-info/20';
     }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="relative min-h-full bg-black text-white flex flex-col">
-      {/* Ambient Background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[250px] h-[250px] bg-bond-blue/10 rounded-full blur-[80px]" />
-        <div className="absolute bottom-1/3 left-0 w-[200px] h-[200px] bg-primary/10 rounded-full blur-[60px]" />
-      </div>
-
+    <div className="relative min-h-full bg-background text-text-primary flex flex-col">
       {/* Header */}
-      <header className="relative z-10 px-4 pt-4 pb-3 border-b border-white/5">
+      <header className="relative z-10 px-4 pt-4 pb-3 border-b border-border bg-surface">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center"
+            className="w-9 h-9 rounded-full bg-input-bg border border-border flex items-center justify-center"
           >
-            <span className="material-symbols-outlined text-white/70 text-lg">arrow_back</span>
+            <span className="material-symbols-outlined text-text-secondary text-lg">arrow_back</span>
           </button>
-          <h1 className="text-white font-bold text-lg">Notifications</h1>
-          <button className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-white/70 text-lg">settings</span>
+          <h1 className="text-text-primary font-bold text-lg">Notifications</h1>
+          <button className="w-9 h-9 rounded-full bg-input-bg border border-border flex items-center justify-center">
+            <span className="material-symbols-outlined text-text-secondary text-lg">settings</span>
           </button>
         </div>
 
         {/* Unread Badge */}
         {unreadCount > 0 && (
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-white/50 text-xs">{unreadCount} unread notification{unreadCount > 1 ? 's' : ''}</span>
+            <span className="text-text-secondary text-xs">{unreadCount} unread notification{unreadCount > 1 ? 's' : ''}</span>
             <button className="text-primary text-xs font-medium">Mark all as read</button>
           </div>
         )}
@@ -119,7 +113,7 @@ const Notifications: React.FC = () => {
         {notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`p-4 rounded-2xl bg-white/5 border transition-all active:scale-[0.98] ${notification.read ? 'border-white/10 opacity-70' : 'border-white/20'
+            className={`p-4 rounded-2xl bg-surface border transition-all active:scale-[0.98] ${notification.read ? 'border-border opacity-70' : 'border-border shadow-soft'
               }`}
           >
             <div className="flex gap-3">
@@ -131,50 +125,50 @@ const Notifications: React.FC = () => {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className={`text-sm font-bold ${notification.read ? 'text-white/70' : 'text-white'}`}>
+                  <h3 className={`text-sm font-bold ${notification.read ? 'text-text-secondary' : 'text-text-primary'}`}>
                     {notification.title}
                   </h3>
                   {!notification.read && (
                     <span className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5" />
                   )}
                 </div>
-                <p className="text-white/50 text-xs mt-1 leading-relaxed">{notification.message}</p>
-                <p className="text-white/30 text-[10px] mt-2">{notification.time}</p>
+                <p className="text-text-secondary text-xs mt-1 leading-relaxed">{notification.message}</p>
+                <p className="text-text-secondary/60 text-[10px] mt-2">{notification.time}</p>
               </div>
             </div>
           </div>
         ))}
 
-        {/* Empty State (hidden when there are notifications) */}
+        {/* Empty State */}
         {notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-              <span className="material-symbols-outlined text-3xl text-white/30">notifications_off</span>
+            <div className="w-16 h-16 rounded-full bg-input-bg flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-3xl text-text-secondary/30">notifications_off</span>
             </div>
-            <p className="text-white/50 text-sm">No notifications yet</p>
-            <p className="text-white/30 text-xs mt-1">We'll notify you of important updates</p>
+            <p className="text-text-secondary text-sm">No notifications yet</p>
+            <p className="text-text-secondary/60 text-xs mt-1">We'll notify you of important updates</p>
           </div>
         )}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="absolute bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black via-black/95 to-transparent">
-        <div className="flex items-center justify-around px-4 py-2.5 rounded-2xl bg-white/[0.08] backdrop-blur-xl border border-white/10">
+      <nav className="absolute bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-background via-background/95 to-transparent">
+        <div className="flex items-center justify-around px-4 py-2.5 rounded-2xl bg-surface border border-border shadow-card">
           <button onClick={() => navigate('/dashboard')} className="flex flex-col items-center gap-0.5 px-3 py-1 opacity-50 hover:opacity-80 transition-opacity">
-            <span className="material-symbols-outlined text-white/60 text-xl">home</span>
-            <span className="text-[9px] text-white/60">Home</span>
+            <span className="material-symbols-outlined text-text-secondary text-xl">home</span>
+            <span className="text-[9px] text-text-secondary">Home</span>
           </button>
           <button onClick={() => navigate('/onboarding')} className="flex flex-col items-center gap-0.5 px-3 py-1 opacity-50 hover:opacity-80 transition-opacity">
-            <span className="material-symbols-outlined text-white/60 text-xl">quiz</span>
-            <span className="text-[9px] text-white/60">Calibrate</span>
+            <span className="material-symbols-outlined text-text-secondary text-xl">quiz</span>
+            <span className="text-[9px] text-text-secondary">Calibrate</span>
           </button>
           <button onClick={() => navigate('/insights')} className="flex flex-col items-center gap-0.5 px-3 py-1 opacity-50 hover:opacity-80 transition-opacity">
-            <span className="material-symbols-outlined text-white/60 text-xl">bar_chart</span>
-            <span className="text-[9px] text-white/60">Insights</span>
+            <span className="material-symbols-outlined text-text-secondary text-xl">bar_chart</span>
+            <span className="text-[9px] text-text-secondary">Insights</span>
           </button>
           <button onClick={() => navigate('/settings')} className="flex flex-col items-center gap-0.5 px-3 py-1 opacity-50 hover:opacity-80 transition-opacity">
-            <span className="material-symbols-outlined text-white/60 text-xl">settings</span>
-            <span className="text-[9px] text-white/60">Settings</span>
+            <span className="material-symbols-outlined text-text-secondary text-xl">settings</span>
+            <span className="text-[9px] text-text-secondary">Settings</span>
           </button>
         </div>
       </nav>

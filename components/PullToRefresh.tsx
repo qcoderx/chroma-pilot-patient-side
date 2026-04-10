@@ -31,11 +31,9 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, children, clas
     const distance = Math.min(currentY.current - startY.current, MAX_PULL);
 
     if (distance > 0) {
-      // Resistance effect - pull gets harder as you go
       const resistedDistance = distance * (1 - distance / (MAX_PULL * 2));
       setPullDistance(resistedDistance);
 
-      // Haptic feedback at threshold
       if (distance >= THRESHOLD && pullDistance < THRESHOLD) {
         if ('vibrate' in navigator) {
           navigator.vibrate(20);
@@ -51,9 +49,8 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, children, clas
 
     if (pullDistance >= THRESHOLD && !isRefreshing) {
       setIsRefreshing(true);
-      setPullDistance(60); // Hold at spinner position
+      setPullDistance(60);
 
-      // Haptic feedback
       if ('vibrate' in navigator) {
         navigator.vibrate([30, 20, 30]);
       }
@@ -91,17 +88,17 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, children, clas
       >
         <div
           className={`
-            w-10 h-10 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm
+            w-10 h-10 rounded-full bg-surface border border-border shadow-card
             flex items-center justify-center
             ${isRefreshing ? 'animate-spin' : ''}
           `}
           style={{
             transform: isRefreshing ? undefined : `rotate(${rotation}deg)`,
-            boxShadow: progress >= 1 ? '0 0 15px rgba(54, 226, 123, 0.4)' : undefined,
+            boxShadow: progress >= 1 ? '0 4px 14px rgba(19, 127, 236, 0.25)' : undefined,
           }}
         >
           <span
-            className={`material-symbols-outlined text-lg transition-colors duration-200 ${progress >= 1 ? 'text-primary' : 'text-white/60'
+            className={`material-symbols-outlined text-lg transition-colors duration-200 ${progress >= 1 ? 'text-primary' : 'text-text-secondary'
               }`}
           >
             {isRefreshing ? 'sync' : 'arrow_downward'}
@@ -124,7 +121,7 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, children, clas
               cy="24"
               r="20"
               fill="none"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="#e2e8f0"
               strokeWidth="2"
             />
             <circle
@@ -132,7 +129,7 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, children, clas
               cy="24"
               r="20"
               fill="none"
-              stroke={progress >= 1 ? '#36e27b' : '#00C2FF'}
+              stroke={progress >= 1 ? '#137fec' : '#2563eb'}
               strokeWidth="2"
               strokeDasharray={`${progress * 125.6} 125.6`}
               strokeLinecap="round"

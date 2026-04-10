@@ -8,7 +8,7 @@ interface RippleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 
 export const RippleButton: React.FC<RippleButtonProps> = ({
   children,
-  rippleColor = 'rgba(255, 255, 255, 0.3)',
+  rippleColor = 'rgba(19, 127, 236, 0.2)',
   className = '',
   onClick,
   ...props
@@ -25,7 +25,6 @@ export const RippleButton: React.FC<RippleButtonProps> = ({
 
       setRipples((prev) => [...prev, { x, y, id }]);
 
-      // Haptic feedback
       if ('vibrate' in navigator) {
         navigator.vibrate(10);
       }
@@ -113,8 +112,8 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
   progress,
   size = 60,
   strokeWidth = 4,
-  color = '#36e27b',
-  bgColor = 'rgba(255, 255, 255, 0.1)',
+  color = '#137fec',
+  bgColor = 'rgba(226, 232, 240, 0.5)',
   children,
 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -144,7 +143,7 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
           strokeLinecap="round"
           className="transition-all duration-500 ease-out"
           style={{
-            filter: `drop-shadow(0 0 6px ${color}40)`,
+            filter: `drop-shadow(0 0 4px ${color}40)`,
           }}
         />
       </svg>
@@ -184,16 +183,11 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     const animate = () => {
       const elapsed = Date.now() - startTime.current;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function (ease-out)
       const easeOut = 1 - Math.pow(1 - progress, 3);
-
       const currentValue = Math.round(
         startValue.current + (value - startValue.current) * easeOut
       );
-
       setDisplayValue(currentValue);
-
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
@@ -227,7 +221,7 @@ export const ShimmerHighlight: React.FC<ShimmerHighlightProps> = ({
     <div className={`relative overflow-hidden ${className}`}>
       {children}
       {active && (
-        <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
       )}
     </div>
   );
@@ -243,7 +237,7 @@ interface PulseGlowProps {
 
 export const PulseGlow: React.FC<PulseGlowProps> = ({
   children,
-  color = '54, 226, 123',
+  color = '19, 127, 236',
   className = '',
   active = true,
 }) => {
@@ -259,8 +253,8 @@ export const PulseGlow: React.FC<PulseGlowProps> = ({
       {active && (
         <style>{`
           @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(${color}, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(${color}, 0.6); }
+            0%, 100% { box-shadow: 0 0 10px rgba(${color}, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(${color}, 0.4); }
           }
         `}</style>
       )}
@@ -296,10 +290,10 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
           props.onBlur?.(e);
         }}
         className={`
-          w-full px-4 py-3 pt-6 bg-white/5 border rounded-xl outline-none
-          transition-all duration-200 text-white
-          ${error ? 'border-red-500/50' : isFocused ? 'border-primary/50' : 'border-white/10'}
-          ${isFocused ? 'bg-white/[0.08]' : ''}
+          w-full px-4 py-3 pt-6 bg-input-bg border rounded-xl outline-none
+          transition-all duration-200 text-text-primary
+          ${error ? 'border-danger/50' : isFocused ? 'border-primary ring-2 ring-primary/20' : 'border-border'}
+          ${isFocused ? 'bg-surface' : ''}
         `}
       />
       <label
@@ -309,13 +303,13 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
             ? 'top-2 text-xs'
             : 'top-1/2 -translate-y-1/2 text-sm'
           }
-          ${error ? 'text-red-400' : isFocused ? 'text-primary' : 'text-white/50'}
+          ${error ? 'text-danger' : isFocused ? 'text-primary' : 'text-text-secondary'}
         `}
       >
         {label}
       </label>
       {error && (
-        <p className="mt-1 text-xs text-red-400 flex items-center gap-1">
+        <p className="mt-1 text-xs text-danger flex items-center gap-1">
           <span className="material-symbols-outlined text-sm">error</span>
           {error}
         </p>
@@ -357,11 +351,11 @@ export const StreakFire: React.FC<StreakFireProps> = ({
         )}
       </div>
       <div className="flex flex-col">
-        <span className={`font-black text-lg transition-all duration-300 ${isOnFire ? 'text-orange-400 animate-pulse' : 'text-white/70'
+        <span className={`font-black text-lg transition-all duration-300 ${isOnFire ? 'text-orange-500 animate-pulse' : 'text-text-secondary'
           }`}>
           {streak}x
         </span>
-        <span className="text-[8px] text-white/40 uppercase tracking-wider">Streak</span>
+        <span className="text-[8px] text-text-secondary uppercase tracking-wider">Streak</span>
       </div>
     </div>
   );
@@ -390,13 +384,13 @@ export const XPPopup: React.FC<XPPopupProps> = ({ amount, multiplier = 1, onComp
   return (
     <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-50">
       <div className="animate-[xpFloat_1.2s_ease-out_forwards] flex flex-col items-center">
-        <span className={`font-black text-3xl ${multiplier > 1 ? 'text-amber-400' : 'text-primary'
-          } drop-shadow-[0_0_20px_currentColor]`}>
+        <span className={`font-black text-3xl ${multiplier > 1 ? 'text-warning' : 'text-primary'
+          } drop-shadow-[0_0_10px_currentColor]`}>
           +{amount * multiplier}
         </span>
-        <span className="text-white/60 text-xs font-bold">XP</span>
+        <span className="text-text-secondary text-xs font-bold">XP</span>
         {multiplier > 1 && (
-          <span className="text-orange-400 text-[10px] font-bold mt-1 animate-bounce">
+          <span className="text-orange-500 text-[10px] font-bold mt-1 animate-bounce">
             {multiplier}x COMBO!
           </span>
         )}
@@ -420,7 +414,7 @@ export const ComboMeter: React.FC<ComboMeterProps> = ({
   className = '',
 }) => {
   const multiplier = Math.min(combo, maxCombo);
-  const colors = ['text-white/50', 'text-primary', 'text-emerald-400', 'text-amber-400', 'text-orange-400', 'text-red-400'];
+  const colors = ['text-text-secondary', 'text-primary', 'text-info', 'text-warning', 'text-orange-500', 'text-danger'];
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -430,8 +424,8 @@ export const ComboMeter: React.FC<ComboMeterProps> = ({
           <div
             key={i}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${i < combo
-              ? 'bg-gradient-to-br from-primary to-amber-400 scale-110 shadow-[0_0_8px_rgba(54,226,123,0.6)]'
-              : 'bg-white/20'
+              ? 'bg-gradient-to-br from-primary to-info scale-110 shadow-[0_0_6px_rgba(19,127,236,0.5)]'
+              : 'bg-border'
               }`}
             style={{ transitionDelay: `${i * 50}ms` }}
           />
@@ -445,9 +439,9 @@ export const ComboMeter: React.FC<ComboMeterProps> = ({
 
       {/* Timer bar */}
       {combo > 0 && (
-        <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
+        <div className="w-12 h-1 bg-border rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-primary to-amber-400 transition-all duration-100"
+            className="h-full bg-gradient-to-r from-primary to-info transition-all duration-100"
             style={{ width: `${timeLeft}%` }}
           />
         </div>
@@ -494,9 +488,9 @@ export const SpringButton: React.FC<SpringButtonProps> = ({
   };
 
   const variantClasses = {
-    primary: 'bg-gradient-to-r from-primary to-emerald-400 text-black font-bold',
-    secondary: 'bg-white/10 border border-white/20 text-white',
-    ghost: 'bg-transparent text-white/70 hover:text-white hover:bg-white/5',
+    primary: 'bg-primary text-white font-bold hover:opacity-90',
+    secondary: 'bg-input-bg border border-border text-text-primary',
+    ghost: 'bg-transparent text-text-secondary hover:text-text-primary hover:bg-input-bg',
   };
 
   return (
@@ -505,7 +499,7 @@ export const SpringButton: React.FC<SpringButtonProps> = ({
       className={`
         relative overflow-hidden transition-all
         ${sizeClasses[size]} ${variantClasses[variant]} ${className}
-        ${glow && variant === 'primary' ? 'shadow-[0_0_20px_rgba(54,226,123,0.4)] hover:shadow-[0_0_30px_rgba(54,226,123,0.6)]' : ''}
+        ${glow && variant === 'primary' ? 'shadow-primary hover:shadow-primary-lg' : ''}
       `}
       style={{
         transform: isPressed ? 'scale(0.95)' : 'scale(1)',
@@ -547,7 +541,7 @@ interface ParticleBurstProps {
 
 export const ParticleBurst: React.FC<ParticleBurstProps> = ({
   active,
-  color = '#36e27b',
+  color = '#137fec',
   particleCount = 12,
   onComplete,
 }) => {
@@ -616,7 +610,7 @@ export const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({ level, o
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-text-primary/60 backdrop-blur-sm animate-fadeIn">
       <div className="flex flex-col items-center gap-4 animate-levelUp">
         {/* Crown icon */}
         <div className="relative">
@@ -628,8 +622,8 @@ export const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({ level, o
 
         {/* Level text */}
         <div className="text-center">
-          <p className="text-white/60 text-sm uppercase tracking-widest mb-1">Level Up!</p>
-          <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-400 to-primary animate-gradient">
+          <p className="text-white/80 text-sm uppercase tracking-widest mb-1">Level Up!</p>
+          <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-warning to-primary animate-gradient">
             Level {level}
           </p>
         </div>
@@ -643,7 +637,7 @@ export const LevelUpCelebration: React.FC<LevelUpCelebrationProps> = ({ level, o
               style={{
                 left: `${Math.random() * 100}%`,
                 top: '-10%',
-                backgroundColor: ['#36e27b', '#00C2FF', '#f59e0b', '#ff6b6b'][i % 4],
+                backgroundColor: ['#137fec', '#2563eb', '#d97706', '#dc2626'][i % 4],
                 animationDelay: `${Math.random() * 0.5}s`,
                 animationDuration: `${2 + Math.random()}s`,
               }}
@@ -673,17 +667,17 @@ export const DailyStreak: React.FC<DailyStreakProps> = ({
   const today = new Date().getDay();
 
   return (
-    <div className={`p-4 rounded-2xl bg-white/5 border border-white/10 ${className}`}>
+    <div className={`p-4 rounded-2xl bg-surface border border-border shadow-soft ${className}`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🔥</span>
           <div>
-            <p className="text-white font-bold text-lg">{currentStreak} Day Streak</p>
-            <p className="text-white/40 text-[10px]">Best: {longestStreak} days</p>
+            <p className="text-text-primary font-bold text-lg">{currentStreak} Day Streak</p>
+            <p className="text-text-secondary text-[10px]">Best: {longestStreak} days</p>
           </div>
         </div>
         {todayCompleted && (
-          <div className="px-2 py-1 bg-primary/20 rounded-full">
+          <div className="px-2 py-1 bg-primary/10 rounded-full">
             <span className="text-primary text-xs font-bold">✓ Today</span>
           </div>
         )}
@@ -697,21 +691,21 @@ export const DailyStreak: React.FC<DailyStreakProps> = ({
 
           return (
             <div key={i} className="flex flex-col items-center gap-1">
-              <span className="text-white/40 text-[9px]">{day}</span>
+              <span className="text-text-secondary text-[9px]">{day}</span>
               <div
                 className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${isToday && todayCompleted
-                  ? 'bg-gradient-to-br from-primary to-emerald-400 text-black shadow-[0_0_15px_rgba(54,226,123,0.5)]'
+                  ? 'bg-primary text-white shadow-primary'
                   : isToday
-                    ? 'bg-white/20 border-2 border-dashed border-primary/50'
+                    ? 'bg-input-bg border-2 border-dashed border-primary/50'
                     : isInStreak
-                      ? 'bg-primary/30 text-primary'
-                      : 'bg-white/5'
+                      ? 'bg-primary/15 text-primary'
+                      : 'bg-input-bg'
                   }`}
               >
                 {(isToday && todayCompleted) || isInStreak ? (
                   <span className="material-symbols-outlined text-sm">local_fire_department</span>
                 ) : isToday ? (
-                  <span className="text-white/40 text-xs">?</span>
+                  <span className="text-text-secondary text-xs">?</span>
                 ) : null}
               </div>
             </div>
@@ -741,10 +735,10 @@ export const AchievementUnlock: React.FC<AchievementUnlockProps> = ({
   const [visible, setVisible] = useState(true);
 
   const rarityConfig = {
-    common: { color: 'from-white/20 to-white/5', text: 'text-white', glow: 'rgba(255,255,255,0.3)' },
-    rare: { color: 'from-bond-blue/30 to-bond-blue/10', text: 'text-bond-blue', glow: 'rgba(0,194,255,0.5)' },
-    epic: { color: 'from-purple-500/30 to-purple-500/10', text: 'text-purple-400', glow: 'rgba(168,85,247,0.5)' },
-    legendary: { color: 'from-amber-500/30 to-amber-500/10', text: 'text-amber-400', glow: 'rgba(245,158,11,0.6)' },
+    common: { color: 'from-text-secondary/20 to-text-secondary/5', text: 'text-text-primary', glow: 'rgba(100,116,139,0.3)' },
+    rare: { color: 'from-info/20 to-info/5', text: 'text-info', glow: 'rgba(37,99,235,0.3)' },
+    epic: { color: 'from-purple-500/20 to-purple-500/5', text: 'text-purple-500', glow: 'rgba(168,85,247,0.3)' },
+    legendary: { color: 'from-warning/20 to-warning/5', text: 'text-warning', glow: 'rgba(217,119,6,0.4)' },
   };
 
   const config = rarityConfig[rarity];
@@ -763,16 +757,15 @@ export const AchievementUnlock: React.FC<AchievementUnlockProps> = ({
   return (
     <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[100] animate-slideUp">
       <div
-        className={`flex items-center gap-4 px-5 py-4 rounded-2xl bg-gradient-to-r ${config.color} border border-white/20 backdrop-blur-xl`}
-        style={{ boxShadow: `0 0 30px ${config.glow}` }}
+        className={`flex items-center gap-4 px-5 py-4 rounded-2xl bg-gradient-to-r ${config.color} border border-border backdrop-blur-xl bg-surface/90 shadow-elevated`}
       >
-        <div className={`w-14 h-14 rounded-xl bg-black/30 flex items-center justify-center ${config.text}`}>
+        <div className={`w-14 h-14 rounded-xl bg-input-bg flex items-center justify-center ${config.text}`}>
           <span className="material-symbols-outlined text-3xl">{icon}</span>
         </div>
         <div>
-          <p className="text-white/60 text-[10px] uppercase tracking-wider">Achievement Unlocked!</p>
+          <p className="text-text-secondary text-[10px] uppercase tracking-wider">Achievement Unlocked!</p>
           <p className={`font-bold text-lg ${config.text}`}>{name}</p>
-          <p className="text-amber-400 text-xs font-bold">+{xp} XP</p>
+          <p className="text-warning text-xs font-bold">+{xp} XP</p>
         </div>
         <span className="text-3xl animate-bounce">🏆</span>
       </div>
