@@ -63,6 +63,9 @@ const STORAGE_PATIENT_KEY = 'chromapilot_patient';
 const STORAGE_TOKEN_TYPE_KEY = 'chromapilot_token_type';
 const STORAGE_AUTH_ERROR_KEY = 'chromapilot_auth_error';
 
+// Temporary prototype mode: bypass live verify endpoint and use a stable test identity.
+const MOCK_AUTH_ENABLED = (viteEnv?.VITE_MOCK_AUTH ?? 'true') !== 'false';
+
 const setAuthError = (message: string): void => {
   localStorage.setItem(STORAGE_AUTH_ERROR_KEY, message);
 };
@@ -143,6 +146,59 @@ interface VerifyExchangeResult {
   patient?: VerifyLinkPatient;
 }
 
+const persistSession = (session: AuthSession): void => {
+  localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(session));
+  localStorage.setItem(STORAGE_ACCESS_TOKEN_KEY, session.token);
+  localStorage.setItem(STORAGE_TOKEN_TYPE_KEY, session.tokenType || 'bearer');
+  if (session.user) {
+    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(session.user));
+  }
+  if (session.patient) {
+    localStorage.setItem(STORAGE_PATIENT_KEY, JSON.stringify(session.patient));
+  }
+};
+
+const buildMockSession = (): AuthSession => {
+  const now = Math.floor(Date.now() / 1000);
+  const payload: JWTPayload = {
+    sub: '720d47e7-4e10-4c2d-a0f8-6d6750d22cc8',
+    name: 'Test Patient',
+    email: 'patient_b8a6e2fc@chromapilot.com',
+    patient_id: 'b8a6e2fc-c674-4104-bf38-6e1fa8c00e93',
+    iat: now,
+    exp: now + 60 * 60 * 24 * 30,
+    iss: 'chromapilot-mock',
+  };
+
+  return {
+    token: 'mock-access-token',
+    payload,
+    user: {
+      id: payload.sub,
+      email: payload.email || 'patient_b8a6e2fc@chromapilot.com',
+      is_doctor: false,
+      is_active: true,
+    },
+    patient: {
+      id: payload.patient_id || 'b8a6e2fc-c674-4104-bf38-6e1fa8c00e93',
+      full_name: payload.name || 'Test Patient',
+    },
+    tokenType: 'bearer',
+    isValid: true,
+    expiresAt: new Date((now + 60 * 60 * 24 * 30) * 1000),
+  };
+};
+
+export const ensureMockSession = (): AuthSession => {
+  const current = getCurrentSession();
+  if (current) return current;
+
+  const mockSession = buildMockSession();
+  persistSession(mockSession);
+  clearAuthError();
+  return mockSession;
+};
+
 const exchangeMagicLinkToken = async (token: string): Promise<VerifyExchangeResult | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/auth/verify-patient-link`, {
@@ -192,6 +248,10 @@ const exchangeMagicLinkToken = async (token: string): Promise<VerifyExchangeResu
 
 // Process magic link and create session
 export const processMagicLink = async (): Promise<AuthSession | null> => {
+  if (MOCK_AUTH_ENABLED) {
+    return ensureMockSession();
+  }
+
   const magicLinkToken = extractTokenFromURL();
 
   if (!magicLinkToken) {
@@ -245,15 +305,7 @@ export const processMagicLink = async (): Promise<AuthSession | null> => {
   };
 
   // Store auth data in localStorage for persistence
-  localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(session));
-  localStorage.setItem(STORAGE_ACCESS_TOKEN_KEY, session.token);
-  localStorage.setItem(STORAGE_TOKEN_TYPE_KEY, session.tokenType || 'bearer');
-  if (session.user) {
-    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(session.user));
-  }
-  if (session.patient) {
-    localStorage.setItem(STORAGE_PATIENT_KEY, JSON.stringify(session.patient));
-  }
+  persistSession(session);
 
   // Clean the URL (remove token from visible URL)
   cleanURL();
@@ -371,6 +423,10 @@ export const getUserName = (): string | null => {
 
 // Initialize authentication on app load
 export const initAuth = async (): Promise<AuthSession | null> => {
+  if (MOCK_AUTH_ENABLED) {
+    return ensureMockSession();
+  }
+
   // First check for magic link
   const magicLinkSession = await processMagicLink();
   if (magicLinkSession) {
